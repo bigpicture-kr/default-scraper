@@ -18,7 +18,7 @@ class InstagramHarParser:
         self.data = data['log']
         self.keyword = keyword
     
-    def parse_contents(self):
+    def parse_contents(self, output_file=None):
         prefixes = (
             "https://i.instagram.com/api/v1/tags/web_info/",
             f"https://i.instagram.com/api/v1/tags/{parse.quote(self.keyword)}/sections/",
@@ -31,6 +31,12 @@ class InstagramHarParser:
                 and entry['request']['url'].startswith(prefixes)
                 and 'text' in entry['response']['content'].keys()
         ]
+
+        if output_file is not None:
+            with open(output_file, "w") as file:
+                string = json.dumps(contents)
+                file.write(string)
+
         return contents
 
 if __name__ == "__main__":
@@ -47,8 +53,15 @@ if __name__ == "__main__":
         required=True,
         help="Search keyword for which to collect data.",
     )
+    arg_parser.add_argument(
+        "--output_file",
+        type=str,
+        default=None,
+        help="The path to save processed file.",
+    )
 
     args = arg_parser.parse_args()
 
     parser = InstagramHarParser(args.har_file, args.keyword)
-    print(len(parser.parse_contents()))
+    contents_length = len(parser.parse_contents(args.output_file))
+    print(f"{contents_length} contents found.")
