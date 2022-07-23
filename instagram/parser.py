@@ -1,6 +1,14 @@
+from dataclasses import dataclass
 import json
 import base64
 from urllib import parse
+
+@dataclass
+class InstagramContent:
+    content_url: str
+    image_url: str
+    author: str
+    comments: dict
 
 class InstagramHarParser:
     def __init__(self, har_file, keyword):
