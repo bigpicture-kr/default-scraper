@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import json
 import base64
+import argparse
 from urllib import parse
 
 @dataclass
@@ -33,5 +34,21 @@ class InstagramHarParser:
         return contents
 
 if __name__ == "__main__":
-    parser = InstagramHarParser("./data/www.instagram.com.har", "거꾸로먹는야쿠르트")
-    parser.parse_contents()
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument(
+        "--har_file",
+        type=str,
+        default="./data/www.instagram.com.har",
+        help="The path of .har file containing the network log of the page to parse.",
+    )
+    arg_parser.add_argument(
+        "--keyword",
+        type=str,
+        required=True,
+        help="Search keyword for which to collect data.",
+    )
+
+    args = arg_parser.parse_args()
+
+    parser = InstagramHarParser(args.har_file, args.keyword)
+    print(len(parser.parse_contents()))
