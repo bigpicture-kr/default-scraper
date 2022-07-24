@@ -29,7 +29,11 @@ class InstagramHarParser:
             with open(output_file, "w") as file:
                 string = json.dumps(contents)
                 file.write(string)
+        
+        if len(contents) == 0:
+            raise Exception("No instagram content was found in the input har file!")
 
+        self.contents = contents
         return contents
 
 if __name__ == "__main__":
