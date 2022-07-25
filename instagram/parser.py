@@ -25,12 +25,20 @@ class InstagramParser:
         # Sign-in and load cookies
         cookies = signin(self.username, self.password)
         self.cookies = {cookie['name']: cookie['value'] for cookie in cookies}
-        print("cookies", self.cookies)
+        self.headers['x-csrftoken'] = self.cookies['csrftoken']
+        print("Signed in.")
 
         # Request web_info, which is search result summary information
+        print("Loading `web_info`...")
         web_info = self.request_web_info()
         media_list += self.parse_sections(web_info['top'])
         media_list += self.parse_sections(web_info['recent'])
+        print("`web_info` loaded.")
+
+        print("Loading `section_info`...")
+        section_info = self.request_section_info()
+        media_list += self.parse_sections(section_info)
+        print("`section_info` loaded.")
 
         return media_list
 
@@ -45,15 +53,32 @@ class InstagramParser:
         try:
             web_info = response.json()['data']
         except Exception:
+            print(response.status_code, response.content)
             raise Exception("Failed to load `web_info`.")
         
         return web_info
+    
+    def request_section_info(self):
+        response = requests.post(
+            url=f"https://i.instagram.com/api/v1/tags/{self.keyword}/sections/",
+            headers=self.headers,
+            cookies=self.cookies,
+        )
+
+        try:
+            section_info = response.json()
+        except Exception:
+            print(response.status_code, response.content)
+            raise Exception("Failed to load `section_info`.")
+        
+        return section_info
 
     def parse_sections(self, content_data):
         section_medias = [
             content['layout_content']['medias']
             for content
             in content_data['sections']
+            if content['layout_type'] == "media_grid"
         ]
 
         media_list = []
