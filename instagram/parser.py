@@ -2,14 +2,15 @@ import json
 import base64
 import requests
 from urllib import parse
+from signin import signin
 #from .dataclasses import *
 
-class InstagramHarParser:
-    def __init__(self, har_file, keyword):
-        with open(har_file, "r") as file:
-            data = json.loads(file.read())
-        self.data = data['log']
+class InstagramParser:
+    def __init__(self, username, password, keyword):
+        self.username = username
+        self.password = password
         self.keyword = keyword
+        self.cookies = None
         self.contents = None
         self.headers = {
             "accept-encoding": "gzip, deflate, br",
@@ -18,11 +19,22 @@ class InstagramHarParser:
             "x-ig-app-id": "936619743392459",
         }
 
+    def run(self):
+        # Sign-in and load cookies
+        cookies = signin(self.username, self.password)
+        self.cookies = {cookie['name']: cookie['value'] for cookie in cookies}
+
+        # Request web_info, which is search result summary information
+        web_info = self.request_web_info()
+
+        return None
+
     def request_web_info(self):
         response = requests.get(
             url="https://i.instagram.com/api/v1/tags/web_info/",
             params={"tag_name": self.keyword},
             headers=self.headers,
+            cookies=self.cookies,
         )
         return response.json()
 
@@ -61,7 +73,7 @@ class InstagramHarParser:
 
         return media_list
     
-    def parse_contents(self, output_file=None):
+    '''def parse_contents(self):
         prefixes = (
             "https://i.instagram.com/api/v1/tags/web_info/",
             f"https://i.instagram.com/api/v1/tags/{parse.quote(self.keyword)}/sections/",
@@ -74,14 +86,9 @@ class InstagramHarParser:
                 and entry['request']['url'].startswith(prefixes)
                 and 'text' in entry['response']['content'].keys()
         ]
-
-        if output_file is not None:
-            with open(output_file, "w") as file:
-                string = json.dumps(contents)
-                file.write(string)
         
         if len(contents) == 0:
             raise Exception("No instagram content was found in the input har file!")
 
         self.contents = contents
-        return contents
+        return contents'''
