@@ -1,6 +1,7 @@
 import json
 import base64
 import argparse
+import requests
 from urllib import parse
 #from .dataclasses import *
 
@@ -11,6 +12,20 @@ class InstagramHarParser:
         self.data = data['log']
         self.keyword = keyword
         self.contents = None
+        self.headers = {
+            "accept-encoding": "gzip, deflate, br",
+            "accept-language": "ko,en;q=0.9,en-US;q=0.8",
+            "access-control-expose-headers": "X-IG-Set-WWW-Claim",
+            "x-ig-app-id": "936619743392459",
+        }
+
+    def request_web_info(self):
+        response = requests.get(
+            url="https://i.instagram.com/api/v1/tags/web_info/",
+            params={"tag_name": self.keyword},
+            headers=self.headers,
+        )
+        return response.json()
 
     def get_media(self, output_file=None):
         if self.contents is None:
@@ -96,5 +111,7 @@ if __name__ == "__main__":
     args = arg_parser.parse_args()
 
     parser = InstagramHarParser(args.har_file, args.keyword)
-    media_length = len(parser.get_media(args.output_file))
-    print(f"{media_length} media found.")
+    data = parser.request_web_info()
+    print(data)
+    #media_length = len(parser.get_media(args.output_file))
+    #print(f"{media_length} media found.")
