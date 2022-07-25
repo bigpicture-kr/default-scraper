@@ -26,4 +26,4 @@ class InstagramContent:
     author_full_name: str
     like_count: int
     result: str
-    comments: List[InstagramComment]
+    comments: List[InstagramComment] = []

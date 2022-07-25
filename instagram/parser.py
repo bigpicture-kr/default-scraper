@@ -2,7 +2,7 @@ import json
 import base64
 import argparse
 from urllib import parse
-from .dataclasses import *
+#from .dataclasses import *
 
 class InstagramHarParser:
     def __init__(self, har_file, keyword):
@@ -10,6 +10,42 @@ class InstagramHarParser:
             data = json.loads(file.read())
         self.data = data['log']
         self.keyword = keyword
+        self.contents = None
+
+    def get_media(self, output_file=None):
+        if self.contents is None:
+            self.parse_contents()
+        
+        media_list = []
+        for content in self.contents:
+            if "sections" not in content and "data" in content:
+                # Instagram web_info API
+                media_list += self.parse_sections(content['data']['top'])
+                media_list += self.parse_sections(content['data']['recent'])
+            elif "sections" in content:
+                # Instagram sections API
+                media_list += self.parse_sections(content)
+
+        if output_file is not None:
+            with open(output_file, "w") as file:
+                string = json.dumps(media_list)
+                file.write(string)
+        
+        return media_list
+
+    def parse_sections(self, content_data):
+        section_medias = [
+            content['layout_content']['medias']
+            for content
+            in content_data['sections']
+        ]
+
+        media_list = []
+        for row_medias in section_medias:
+            for media in row_medias:
+                media_list += media.values()
+
+        return media_list
     
     def parse_contents(self, output_file=None):
         prefixes = (
@@ -60,5 +96,5 @@ if __name__ == "__main__":
     args = arg_parser.parse_args()
 
     parser = InstagramHarParser(args.har_file, args.keyword)
-    contents_length = len(parser.parse_contents(args.output_file))
-    print(f"{contents_length} contents found.")
+    media_length = len(parser.get_media(args.output_file))
+    print(f"{media_length} media found.")
