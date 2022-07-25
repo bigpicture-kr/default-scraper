@@ -20,14 +20,19 @@ class InstagramParser:
         }
 
     def run(self):
+        media_list = []
+
         # Sign-in and load cookies
         cookies = signin(self.username, self.password)
         self.cookies = {cookie['name']: cookie['value'] for cookie in cookies}
+        print("cookies", self.cookies)
 
         # Request web_info, which is search result summary information
         web_info = self.request_web_info()
+        media_list += self.parse_sections(web_info['top'])
+        media_list += self.parse_sections(web_info['recent'])
 
-        return None
+        return media_list
 
     def request_web_info(self):
         response = requests.get(
@@ -36,28 +41,13 @@ class InstagramParser:
             headers=self.headers,
             cookies=self.cookies,
         )
-        return response.json()
-
-    def get_media(self, output_file=None):
-        if self.contents is None:
-            self.parse_contents()
         
-        media_list = []
-        for content in self.contents:
-            if "sections" not in content and "data" in content:
-                # Instagram web_info API
-                media_list += self.parse_sections(content['data']['top'])
-                media_list += self.parse_sections(content['data']['recent'])
-            elif "sections" in content:
-                # Instagram sections API
-                media_list += self.parse_sections(content)
-
-        if output_file is not None:
-            with open(output_file, "w") as file:
-                string = json.dumps(media_list)
-                file.write(string)
+        try:
+            web_info = response.json()['data']
+        except Exception:
+            raise Exception("Failed to load `web_info`.")
         
-        return media_list
+        return web_info
 
     def parse_sections(self, content_data):
         section_medias = [
