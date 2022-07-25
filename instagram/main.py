@@ -27,6 +27,4 @@ if __name__ == "__main__":
 
     parser = InstagramParser(USERNAME, PASSWORD, args.keyword)
     data = parser.run()
-    print(data)
-    #media_length = len(parser.get_media(args.output_file))
-    #print(f"{media_length} media found.")
+    print(f"{len(data)} data found.")

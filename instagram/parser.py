@@ -35,10 +35,19 @@ class InstagramParser:
         media_list += self.parse_sections(web_info['recent'])
         print("`web_info` loaded.")
 
-        print("Loading `section_info`...")
-        section_info = self.request_section_info()
-        media_list += self.parse_sections(section_info)
-        print("`section_info` loaded.")
+        page, max_id = 1, ""
+        try:
+            while True:
+                print(f"Loading `section_info`[{page}]...")
+                section_info = self.request_section_info(page, max_id)
+                media_list += self.parse_sections(section_info)
+                print(f"`section_info`[{page}] loaded.")
+                page = section_info['next_page']
+                max_id = section_info['next_max_id']
+                print(f"  {page}, {max_id}")
+        except:
+            pass
+        print("All `section_info` loaded.")
 
         return media_list
 
@@ -58,11 +67,18 @@ class InstagramParser:
         
         return web_info
     
-    def request_section_info(self):
+    def request_section_info(self, page, max_id):
         response = requests.post(
             url=f"https://i.instagram.com/api/v1/tags/{self.keyword}/sections/",
             headers=self.headers,
             cookies=self.cookies,
+            data={
+                "page": page,
+                "max_id": max_id,
+                "include_persistent": 0,
+                "surface": "grid",
+                "tab": "recent",
+            },
         )
 
         try:
