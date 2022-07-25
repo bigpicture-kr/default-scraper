@@ -3,7 +3,6 @@ import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
-from config import *
 
 def signin(username: str, password: str):
     driver = webdriver.get_webdriver()
