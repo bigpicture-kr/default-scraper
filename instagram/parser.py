@@ -1,5 +1,5 @@
 import json
-import base64
+import traceback
 import requests
 from urllib import parse
 from signin import signin
@@ -48,8 +48,8 @@ class InstagramParser:
                     max_id = section_info['next_max_id']
                 else:
                     break
-        except Exception as e:
-            print(e)
+        except Exception:
+            traceback.print_exc()
             pass
         print("All `section_info` loaded.")
 
