@@ -1,7 +1,7 @@
 import json
+import pandas as pd
 import traceback
 import requests
-from urllib import parse
 from signin import signin
 #from .dataclasses import *
 
@@ -54,9 +54,15 @@ class InstagramParser:
         print("All `section_info` loaded.")
 
         if output_file is not None:
-            with open(output_file, "w") as file:
-                string = json.dumps(media_list)
-                file.write(string)
+            if output_file[-4:].lower() == ".csv":
+                # Save as csv
+                df = pd.DataFrame(media_list)
+                df.to_csv(output_file)
+            else:
+                # Save as json
+                with open(output_file, "w") as file:
+                    string = json.dumps(media_list)
+                    file.write(string)
 
         return media_list
 
