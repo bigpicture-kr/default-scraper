@@ -47,6 +47,7 @@ def signin(username: str, password: str, use_cookie: bool=True):
     else:
         for cookie in loaded_cookies:
             driver.add_cookie(cookie)
+        print("Saved cookies have been loaded.")
 
     # Search any tag to build more cookies
     driver.get("https://www.instagram.com/explore/tags/instagram")
@@ -70,6 +71,8 @@ def signin(username: str, password: str, use_cookie: bool=True):
 
     driver.quit()
 
-    save_cookies(cookies)
+    if loaded_cookies is None or not use_cookie:
+        save_cookies(cookies)
+        print(f"Cookies have been saved in `{COOKIE_PATH}`.")
 
     return cookies
