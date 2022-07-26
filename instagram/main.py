@@ -26,5 +26,5 @@ if __name__ == "__main__":
     args = arg_parser.parse_args()
 
     parser = InstagramParser(USERNAME, PASSWORD, args.keyword)
-    data = parser.run()
+    data = parser.run(args.output_file)
     print(f"{len(data)} data found.")

@@ -19,7 +19,7 @@ class InstagramParser:
             "x-ig-app-id": "936619743392459",
         }
 
-    def run(self):
+    def run(self, output_file=None):
         media_list = []
 
         # Sign-in and load cookies
@@ -36,18 +36,27 @@ class InstagramParser:
         print("`web_info` loaded.")
 
         page, max_id = 1, ""
+        print(f"Loading `section_info`...")
         try:
             while True:
-                print(f"Loading `section_info`[{page}]...")
                 section_info = self.request_section_info(page, max_id)
                 media_list += self.parse_sections(section_info)
                 print(f"`section_info`[{page}] loaded.")
-                page = section_info['next_page']
-                max_id = section_info['next_max_id']
-                print(f"  {page}, {max_id}")
-        except:
+
+                if section_info['more_available']:
+                    page = section_info['next_page']
+                    max_id = section_info['next_max_id']
+                else:
+                    break
+        except Exception as e:
+            print(e)
             pass
         print("All `section_info` loaded.")
+
+        if output_file is not None:
+            with open(output_file, "w") as file:
+                string = json.dumps(media_list)
+                file.write(string)
 
         return media_list
 
