@@ -3,13 +3,14 @@ import pandas as pd
 import traceback
 import requests
 from signin import signin
-#from .dataclasses import *
+from dto import *
 
 class InstagramParser:
-    def __init__(self, username, password, keyword):
+    def __init__(self, username, password, keyword, extract_all):
         self.username = username
         self.password = password
         self.keyword = keyword
+        self.extract_all = extract_all
         self.cookies = None
         self.contents = None
         self.headers = {
@@ -63,6 +64,7 @@ class InstagramParser:
                 with open(output_file, "w") as file:
                     string = json.dumps(media_list)
                     file.write(string)
+            print(f"Data saved in `{output_file}`.")
 
         return media_list
 
@@ -104,20 +106,30 @@ class InstagramParser:
         
         return section_info
 
-    def parse_sections(self, content_data):
+    def parse_sections(self, contents):
+        contents = self.parse_sections_as_dict(contents)
+
+        if self.extract_all:
+            return contents
+        
+        contents_data = [InstagramContent(content).to_dict() for content in contents]
+
+        return contents_data
+
+    def parse_sections_as_dict(self, contents):
         section_medias = [
             content['layout_content']['medias']
             for content
-            in content_data['sections']
+            in contents['sections']
             if content['layout_type'] == "media_grid"
         ]
 
-        media_list = []
+        contents_data = []
         for row_medias in section_medias:
             for media in row_medias:
-                media_list += media.values()
+                contents_data += media.values()
 
-        return media_list
+        return contents_data
     
     '''def parse_contents(self):
         prefixes = (

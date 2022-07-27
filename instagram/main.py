@@ -22,9 +22,15 @@ if __name__ == "__main__":
         default=None,
         help="The path to save processed file.",
     )
+    arg_parser.add_argument(
+        "--all", "-a",
+        default=False,
+        action="store_true",
+        help="Extract all responsed data.",
+    )
 
     args = arg_parser.parse_args()
 
-    parser = InstagramParser(USERNAME, PASSWORD, args.keyword)
+    parser = InstagramParser(USERNAME, PASSWORD, args.keyword, args.all)
     data = parser.run(args.output_file)
     print(f"{len(data)} data found.")
