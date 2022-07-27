@@ -69,4 +69,9 @@ class InstagramContent(InstagramDataclassInterface):
         self.media_type = InstagramMediaType(self.media_type)
         self.user = InstagramUser(self.user)
         self.caption = InstagramCaption(self.caption)
-        self.images = [InstagramImage(image) for image in self.images]
+        if "image_versions2" in self._data:
+            self.images = [InstagramImage(image) for image in self._data['image_versions2']['candidates']]
+        elif "carousel_media" in self._data:
+            self.images = []
+            for media in self._data['carousel_media']:
+                self.images += [InstagramImage(image) for image in media['image_versions2']['candidates']]
