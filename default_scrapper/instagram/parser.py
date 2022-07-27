@@ -2,11 +2,11 @@ import json
 import pandas as pd
 import traceback
 import requests
-from signin import signin
-from dto import *
+from .signin import signin
+from .dto import *
 
 class InstagramParser:
-    def __init__(self, username, password, keyword, extract_all):
+    def __init__(self, username, password, keyword, extract_all=False):
         self.username = username
         self.password = password
         self.keyword = keyword

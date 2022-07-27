@@ -1,3 +1,4 @@
+import os
 import time
 from selenium import webdriver
 
@@ -13,7 +14,12 @@ class WebDriver(webdriver.Chrome):
         options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36")
         options.page_load_strategy = 'normal'
 
-        self.driver = super().__init__("./chromedriver", options=options)
+        driver_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__ + "/../")),
+            "drivers",
+            "chromedriver",
+        )
+        self.driver = super().__init__(driver_path, options=options)
 
     def send_keys(element, sequence: str):
         for character in sequence:

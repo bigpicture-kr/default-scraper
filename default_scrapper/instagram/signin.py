@@ -1,12 +1,16 @@
 import os
 import time
 import json
-from webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
+from .webdriver import WebDriver
 
-COOKIE_PATH = "./data/cookies.json"
+COOKIE_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "tmp",
+    "cookies.json"
+)
 
 def load_cookies():
     if not os.path.exists(COOKIE_PATH):
@@ -17,6 +21,7 @@ def load_cookies():
     return cookies
 
 def save_cookies(cookies):
+    os.makedirs(os.path.dirname(COOKIE_PATH), exist_ok=True)
     with open(COOKIE_PATH, "w") as file:
         json.dump(cookies, file)
 
