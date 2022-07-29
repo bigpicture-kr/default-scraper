@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     data = []
     if args.platform == "instagram":
-        from default_scrapper.instagram.parser import InstagramParser
+        from default_scraper.instagram.parser import InstagramParser
         parser = InstagramParser(INSTAGRAM_USERNAME, INSTAGRAM_PASSWORD, args.keyword, args.all)
         data = parser.run(args.output_file)
 
