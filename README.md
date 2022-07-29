@@ -60,4 +60,4 @@ Use `--all` or `-a` option to also scrap unstructured fields.
 
 ## Future works
 
-- Will support scrapping from more platform services.
+- Will support scraping from more platform services.
