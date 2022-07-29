@@ -1,5 +1,5 @@
-# default-scrapper
-Web Scrapper
+# default-scraper
+Web Scraper
 
 ## Features
 
@@ -12,15 +12,15 @@ Web Scrapper
 ### Install
 
 ```bash
-pip install git+https://github.com/bigpicture-kr/default-scrapper.git
+pip install git+https://github.com/bigpicture-kr/default-scraper.git
 ```
 
-It may require authentication before installing since default-scrapper is a private repository of [bigpicture-kr](https://github.com/bigpicture-kr) organization.
+It may require authentication before installing since default-scraper is a private repository of [bigpicture-kr](https://github.com/bigpicture-kr) organization.
 
 ### Scrap Instagram contents in python script
 
 ```python
-from default_scrapper.instagram.parser import InstagramParser
+from default_scraper.instagram.parser import InstagramParser
 USERNAME = ""
 PASSWORD = ""
 KEYWORD = ""
