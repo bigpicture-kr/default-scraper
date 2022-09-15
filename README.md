@@ -1,5 +1,6 @@
 # default-scraper
-Web Scraper
+
+Python Web Scraper
 
 ## Features
 
